@@ -1,42 +1,105 @@
-#root {
-  max-width: 1280px;
-  margin: 0 auto;
+/* Makes the whole page centered and full height */
+.app {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
   padding: 2rem;
+  color: #e5e7eb;
+  font-family: system-ui, sans-serif;
   text-align: center;
+  overflow: hidden;
 }
 
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
+/* Title and subtitle */
+.title {
+  font-size: 2.5rem;
+  margin-bottom: 0.5rem;
 }
 
-@keyframes logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.subtitle {
+  font-size: 1rem;
+  opacity: 0.8;
+  margin-bottom: 1.5rem;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
-  }
+/* The chaos button itself */
+.chaos-button {
+  padding: 1rem 2.5rem;
+  font-size: 1.2rem;
+  border-radius: 999px;
+  border: none;
+  cursor: pointer;
+  background: linear-gradient(135deg, #22c55e, #a855f7);
+  color: #020617;
+  font-weight: bold;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
 }
 
-.card {
-  padding: 2em;
+.chaos-button:hover {
+  filter: brightness(1.1);
 }
 
-.read-the-docs {
-  color: #888;
+/* The sarcastic message */
+.message {
+  margin-top: 1.5rem;
+  max-width: 28rem;
+  font-size: 1rem;
+}
+
+/* Emoji explosion area */
+.emoji-burst {
+  margin-top: 2rem;
+  font-size: 2.2rem;
+  line-height: 1.4;
+  word-break: break-word;
+}
+
+/* When isShaking = true, add a shake animation */
+.shake {
+  animation: shake 0.3s ease;
+}
+
+/* The actual shake animation */
+@keyframes shake {
+  0% { transform: translate(0, 0) rotate(0); }
+  20% { transform: translate(-10px, 5px) rotate(-2deg); }
+  40% { transform: translate(8px, -5px) rotate(2deg); }
+  60% { transform: translate(-8px, 4px) rotate(-1deg); }
+  80% { transform: translate(6px, -4px) rotate(1deg); }
+  100% { transform: translate(0, 0) rotate(0); }
+}
+
+/* Styling for home page links */
+.menu-link {
+  font-size: 1.2rem;
+  color: #facc15;
+  text-decoration: none;
+}
+
+.menu-link:hover {
+  text-decoration: underline;
+  filter: brightness(1.2);
+}
+
+/* Rage pulsing effect */
+.rage {
+  animation: ragePulse 0.5s infinite;
+}
+
+@keyframes ragePulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.03); }
+  100% { transform: scale(1); }
+}
+
+/* Background flash for maximum chaos */
+.chaos-flash {
+  animation: flashBG 0.15s infinite alternate;
+}
+
+@keyframes flashBG {
+  from { filter: brightness(1); }
+  to { filter: brightness(1.5); }
 }
