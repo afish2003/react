@@ -12,6 +12,11 @@ export default function Home() {
                         🔴 The Completely Useless Chaos Button
                     </Link>
                 </li>
+                <li style={{ marginBottom: "1rem" }}>
+                    <Link to="/fakeScanner" className="menu-link">
+                        🦠 Virus Scanner
+                    </Link>
+                </li>
 
                 {/* More games coming soon! */}
             </ul>

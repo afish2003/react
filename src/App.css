@@ -1,4 +1,7 @@
-/* Makes the whole page centered and full height */
+/* ===================================
+   GLOBAL STYLES
+   =================================== */
+
 .app {
   min-height: 100vh;
   display: flex;
@@ -12,66 +15,6 @@
   overflow: hidden;
 }
 
-/* Title and subtitle */
-.title {
-  font-size: 2.5rem;
-  margin-bottom: 0.5rem;
-}
-
-.subtitle {
-  font-size: 1rem;
-  opacity: 0.8;
-  margin-bottom: 1.5rem;
-}
-
-/* The chaos button itself */
-.chaos-button {
-  padding: 1rem 2.5rem;
-  font-size: 1.2rem;
-  border-radius: 999px;
-  border: none;
-  cursor: pointer;
-  background: linear-gradient(135deg, #22c55e, #a855f7);
-  color: #020617;
-  font-weight: bold;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
-}
-
-.chaos-button:hover {
-  filter: brightness(1.1);
-}
-
-/* The sarcastic message */
-.message {
-  margin-top: 1.5rem;
-  max-width: 28rem;
-  font-size: 1rem;
-}
-
-/* Emoji explosion area */
-.emoji-burst {
-  margin-top: 2rem;
-  font-size: 2.2rem;
-  line-height: 1.4;
-  word-break: break-word;
-}
-
-/* When isShaking = true, add a shake animation */
-.shake {
-  animation: shake 0.3s ease;
-}
-
-/* The actual shake animation */
-@keyframes shake {
-  0% { transform: translate(0, 0) rotate(0); }
-  20% { transform: translate(-10px, 5px) rotate(-2deg); }
-  40% { transform: translate(8px, -5px) rotate(2deg); }
-  60% { transform: translate(-8px, 4px) rotate(-1deg); }
-  80% { transform: translate(6px, -4px) rotate(1deg); }
-  100% { transform: translate(0, 0) rotate(0); }
-}
-
-/* Styling for home page links */
 .menu-link {
   font-size: 1.2rem;
   color: #facc15;
@@ -83,20 +26,241 @@
   filter: brightness(1.2);
 }
 
-/* Rage pulsing effect */
-.rage {
+/* ===================================
+   CHAOS PAGE STYLES
+   =================================== */
+
+.chaos-page .title {
+  font-size: 2.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.chaos-page .subtitle {
+  font-size: 1rem;
+  opacity: 0.8;
+  margin-bottom: 1.5rem;
+}
+
+.chaos-page .chaos-button {
+  padding: 1rem 2.5rem;
+  font-size: 1.2rem;
+  border-radius: 999px;
+  border: none;
+  cursor: pointer;
+  background: linear-gradient(135deg, #22c55e, #a855f7);
+  color: #020617;
+  font-weight: bold;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+}
+
+.chaos-page .chaos-button:hover {
+  filter: brightness(1.1);
+}
+
+.chaos-page .message {
+  margin-top: 1.5rem;
+  max-width: 28rem;
+  font-size: 1rem;
+}
+
+.chaos-page .emoji-burst {
+  margin-top: 2rem;
+  font-size: 2.2rem;
+  line-height: 1.4;
+  word-break: break-word;
+}
+
+.chaos-page .shake {
+  animation: shake 0.3s ease;
+}
+
+.chaos-page .rage {
   animation: ragePulse 0.5s infinite;
+}
+
+.chaos-page .chaos-flash {
+  animation: flashBG 0.15s infinite alternate;
+}
+
+/* ===================================
+   FAKE SCANNER PAGE (NAMESPACE)
+   =================================== */
+
+.scanner-page {
+  color: #fff;
+  text-align: center;
+  padding: 40px;
+}
+
+.scanner-page .scan-button {
+  padding: 15px 30px;
+  font-size: 22px;
+  background: red;
+  border: none;
+  color: white;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+.scanner-page .scan-button:hover {
+  background: darkred;
+}
+
+.scanner-page .progress-area {
+  margin-top: 20px;
+}
+
+.scanner-page .progress-bar {
+  width: 80%;
+  height: 25px;
+  background: #333;
+  margin: 0 auto;
+  border-radius: 5px;
+  overflow: hidden;
+}
+
+.scanner-page .progress-bar .fill {
+  height: 100%;
+  background: limegreen;
+  transition: width 0.3s linear;
+}
+
+.scanner-page .warning {
+  margin-top: 10px;
+  font-size: 18px;
+  color: yellow;
+}
+
+.scanner-page .results-area {
+  margin-top: 30px;
+  font-size: 20px;
+}
+
+.scanner-page .danger {
+  margin-top: 15px;
+  color: red;
+  font-weight: bold;
+}
+
+/* Pop-up virus windows */
+.scanner-page .scanner-popup {
+  position: fixed;
+  background: #111827;
+  border: 2px solid #f97316;
+  border-radius: 8px;
+  width: 260px;
+  z-index: 20;
+  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.8);
+  font-size: 0.85rem;
+  color: #fff;
+}
+
+.scanner-page .scanner-popup-header {
+  background: #7f1d1d;
+  color: #fee2e2;
+  padding: 6px 10px;
+  font-weight: bold;
+  border-bottom: 1px solid #f97316;
+  text-align: center;
+}
+
+.scanner-page .scanner-popup-body {
+  padding: 10px;
+}
+
+.scanner-page .scanner-popup-button {
+  width: 100%;
+  border: none;
+  padding: 8px 0;
+  background: #f97316;
+  color: #111827;
+  font-weight: bold;
+  border-radius: 0 0 6px 6px;
+  cursor: pointer;
+}
+
+.scanner-page .scanner-popup-button:hover {
+  filter: brightness(1.15);
+}
+
+/* Emoji rain */
+.scanner-page .scanner-emoji-rain {
+  position: fixed;
+  top: -40px;
+  font-size: 2rem;
+  animation-name: scanner-emoji-fall;
+  animation-timing-function: linear;
+  animation-iteration-count: 1;
+  pointer-events: none;
+  z-index: 5;
+}
+
+@keyframes scanner-emoji-fall {
+  to {
+    transform: translateY(110vh);
+  }
+}
+
+/* Meltdown overlay */
+.scanner-page .scanner-meltdown-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(153, 27, 27, 0.92);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 50;
+}
+
+.scanner-page .scanner-meltdown-box {
+  background: #111827;
+  border-radius: 12px;
+  padding: 24px 32px;
+  max-width: 420px;
+  text-align: center;
+  border: 2px solid #f97316;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.9);
+  color: #fff;
+}
+
+.scanner-page .scanner-meltdown-buttons {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  margin-top: 1.5rem;
+}
+
+.scanner-page .scanner-meltdown-buttons button {
+  padding: 0.6rem 1.4rem;
+  border-radius: 999px;
+  border: none;
+  font-weight: bold;
+  cursor: pointer;
+  background: #f97316;
+  color: #111827;
+}
+
+.scanner-page .scanner-meltdown-buttons button:hover {
+  filter: brightness(1.1);
+}
+
+/* ===================================
+   GLOBAL ANIMATIONS
+   =================================== */
+
+@keyframes shake {
+  0% { transform: translate(0, 0) rotate(0); }
+  20% { transform: translate(-10px, 5px) rotate(-2deg); }
+  40% { transform: translate(8px, -5px) rotate(2deg); }
+  60% { transform: translate(-8px, 4px) rotate(-1deg); }
+  80% { transform: translate(6px, -4px) rotate(1deg); }
+  100% { transform: translate(0, 0) rotate(0); }
 }
 
 @keyframes ragePulse {
   0% { transform: scale(1); }
   50% { transform: scale(1.03); }
   100% { transform: scale(1); }
-}
-
-/* Background flash for maximum chaos */
-.chaos-flash {
-  animation: flashBG 0.15s infinite alternate;
 }
 
 @keyframes flashBG {
