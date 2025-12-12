@@ -13,6 +13,8 @@ function unlockAudio() {
 
 let lastSoundTime = 0;
 
+let activeAudio = null;
+
 function playRandomSound(volume = 0.6) {
     const now = Date.now();
 
@@ -27,7 +29,12 @@ function playRandomSound(volume = 0.6) {
     ];
 
     const src = popupSounds[Math.floor(Math.random() * popupSounds.length)];
+    if (activeAudio) {
+        activeAudio.pause();
+        activeAudio.currentTime = 0;
+    }
     const audio = new Audio(src);
+    activeAudio = audio;
     audio.currentTime = 0;
     audio.volume = volume;
 
@@ -36,6 +43,18 @@ function playRandomSound(volume = 0.6) {
 
 function getRandomFrom(arr) {
     return arr[Math.floor(Math.random() * arr.length)];
+}
+
+function glitchText(text, intensity = 0.15) {
+    const chars = "!@#$%^&*()_+=-[]{};:<>?/\\|~";
+    return text
+        .split("")
+        .map((ch) =>
+            Math.random() < intensity && ch !== " "
+                ? chars[Math.floor(Math.random() * chars.length)]
+                : ch
+        )
+        .join("");
 }
 
 const virusNames = [
@@ -51,20 +70,21 @@ const virusNames = [
 ];
 
 const progressMessages = [
-    "Decrypting noodles…",
-    "Overclocking flux capacitor…",
-    "Reticulating splines…",
-    "Analyzing emotional state…",
-    "Uninstalling common sense…",
-    "Rebooting your bad decisions…",
+    "Poking around files that begged us not to look…",
+    "Rearranging your desktop icons emotionally…",
+    "Asking your laptop how it *feels* today…",
+    "Googling ‘how to remove a curse from a hard drive’…",
+    "Cross-referencing vibes with known malware…",
+    "Running diagnostics on your life choices…",
 ];
 
 export default function FakeScanner() {
     const [progress, setProgress] = useState(0);
     const [isScanning, setIsScanning] = useState(false);
     const [results, setResults] = useState(null);
-    const [statusMessage, setStatusMessage] = useState("Ready to ruin your day.");
+    const [statusMessage, setStatusMessage] = useState("Standing by. Judging silently.");
     const [meltdown, setMeltdown] = useState(false);
+    const [glitching, setGlitching] = useState(false);
 
     function startScan() {
         if (isScanning) return;
@@ -73,7 +93,7 @@ export default function FakeScanner() {
         setProgress(0);
         setResults(null);
         setMeltdown(false);
-        setStatusMessage("Initializing fake security protocols…");
+        setStatusMessage("Booting extremely real, very serious security engine…");
 
         let current = 0;
 
@@ -89,8 +109,10 @@ export default function FakeScanner() {
 
                 setTimeout(() => {
                     setIsScanning(false);
-                    setStatusMessage("Scan complete. Everything is definitely worse now.");
+                    setStatusMessage("Scan complete. This machine has seen things.");
                     setMeltdown(true);
+                    setGlitching(true);
+                    setTimeout(() => setGlitching(false), 1200);
                     playRandomSound(1);
                 }, 600);
             }
@@ -98,10 +120,16 @@ export default function FakeScanner() {
     }
 
     function resetAfterMeltdown() {
+        setGlitching(false);
+        if (activeAudio) {
+            activeAudio.pause();
+            activeAudio.currentTime = 0;
+            activeAudio = null;
+        }
         setMeltdown(false);
         setResults(null);
         setProgress(0);
-        setStatusMessage("System barely holding together. Scan again?");
+        setStatusMessage("System stable* (*definition of ‘stable’ may vary).");
     }
 
     return (
@@ -118,7 +146,7 @@ export default function FakeScanner() {
                         startScan();
                     }}
                 >
-                    {progress === 0 ? "Start Scan" : "Scan Again (Bad Idea)"}
+                    {progress === 0 ? "Scan Anyway" : "Scan Again (Absolutely Worse Idea)"}
                 </button>
             )}
 
@@ -150,8 +178,15 @@ export default function FakeScanner() {
             {meltdown && (
                 <div className="scanner-meltdown-overlay glitch-effect">
                     <div className="scanner-meltdown-box">
-                        <h2>💥 CRITICAL FAILURE 💥</h2>
-                        <p>YOUR EMOTIONAL SUPPORT HARD DRIVE IS COMPROMISED.</p>
+                        <h2>💥 SYSTEM HAS MADE A DECISION 💥</h2>
+                        <p>
+                            {glitching
+                                ? glitchText(
+                                      "Your computer has decided to stop cooperating for personal reasons.",
+                                      0.25
+                                  )
+                                : "Your computer has decided to stop cooperating for personal reasons."}
+                        </p>
                         <div className="scanner-meltdown-buttons">
                             <button
                                 onClick={() => {
@@ -159,7 +194,7 @@ export default function FakeScanner() {
                                     resetAfterMeltdown();
                                 }}
                             >
-                                PANIC
+                                SCREAM INTERNALLY
                             </button>
                             <button
                                 onClick={() => {
@@ -167,7 +202,7 @@ export default function FakeScanner() {
                                     resetAfterMeltdown();
                                 }}
                             >
-                                LOL OK
+                                ACCEPT MY FATE
                             </button>
                         </div>
                     </div>
