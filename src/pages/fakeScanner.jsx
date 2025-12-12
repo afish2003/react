@@ -1,3 +1,5 @@
+import { useState } from "react";
+
 let audioUnlocked = false;
 
 function unlockAudio() {
@@ -9,7 +11,28 @@ function unlockAudio() {
     audioUnlocked = true;
 }
 
-import { useState } from "react";
+let lastSoundTime = 0;
+
+function playRandomSound(volume = 0.6) {
+    const now = Date.now();
+
+    // prevent rapid-fire sound spam
+    if (now - lastSoundTime < 250) return;
+    lastSoundTime = now;
+
+    const popupSounds = [
+        "./sounds/windowsErrorMix.mp3",
+        "./sounds/msdosError.mp3",
+        "./sounds/birdScream.mp3",
+    ];
+
+    const src = popupSounds[Math.floor(Math.random() * popupSounds.length)];
+    const audio = new Audio(src);
+    audio.currentTime = 0;
+    audio.volume = volume;
+
+    audio.play().catch(() => {});
+}
 
 function getRandomFrom(arr) {
     return arr[Math.floor(Math.random() * arr.length)];
@@ -36,82 +59,12 @@ const progressMessages = [
     "Rebooting your bad decisions…",
 ];
 
-const popupLines1 = [
-    "YOUR TOASTER IS NOW SENTIENT.",
-    "YOUR RAM IS LEAKING SPAGHETTI.",
-    "YOUR PRINTER JUST SUBSCRIBED TO 3 NEWSLETTERS.",
-];
-
-const popupLines2 = [
-    "RECOMMENDED ACTION: PANIC.",
-    "STATUS: IRREPARABLE.",
-    "FIXED: 0, MADE WORSE: 27.",
-    "SOLUTION: TURN IT OFF AND CRY.",
-];
-
-const rainEmojis = ["🦠", "🤢", "😡", "💥", "🤖", "🫠", "😱", "🔥"];
-
-const popupSounds = [
-    "./sounds/windowsErrorMix.mp3",
-    "./sounds/msdosError.mp3",
-    "./sounds/birdScream.mp3",
-];
-
-function playRandomSound(volume = 0.6) {
-    const now = Date.now();
-
-    // prevent rapid-fire sound spam
-    if (now - lastSoundTime < 250) return;
-    lastSoundTime = now;
-
-    const src = popupSounds[Math.floor(Math.random() * popupSounds.length)];
-    const audio = new Audio(src);
-    audio.currentTime = 0;
-    audio.volume = volume;
-
-    audio.play().catch(() => {});
-}
-
-let lastSoundTime = 0;
-
 export default function FakeScanner() {
     const [progress, setProgress] = useState(0);
     const [isScanning, setIsScanning] = useState(false);
     const [results, setResults] = useState(null);
-    const [popups, setPopups] = useState([]);
-    const [rain, setRain] = useState([]);
     const [statusMessage, setStatusMessage] = useState("Ready to ruin your day.");
     const [meltdown, setMeltdown] = useState(false);
-
-    function spawnPopup() {
-        const popup = {
-            id: Math.random().toString(36).slice(2),
-            line1: getRandomFrom(popupLines1),
-            line2: getRandomFrom(popupLines2),
-            x: Math.floor(Math.random() * 60) + 10, // vw
-            y: Math.floor(Math.random() * 50) + 10, // vh
-        };
-        setPopups((prev) => [...prev, popup]);
-        playRandomSound();
-    }
-
-    function closePopup(id) {
-        setPopups((prev) => prev.filter((p) => p.id !== id));
-        playRandomSound();
-    }
-
-    function spawnEmoji() {
-        const item = {
-            id: Math.random().toString(36).slice(2),
-            emoji: getRandomFrom(rainEmojis),
-            left: Math.floor(Math.random() * 100),
-            duration: 3 + Math.random() * 2,
-        };
-        setRain((prev) => [...prev, item]);
-        setTimeout(() => {
-            setRain((prev) => prev.filter((e) => e.id !== item.id));
-        }, item.duration * 1000);
-    }
 
     function startScan() {
         if (isScanning) return;
@@ -119,8 +72,6 @@ export default function FakeScanner() {
         setIsScanning(true);
         setProgress(0);
         setResults(null);
-        setPopups([]);
-        setRain([]);
         setMeltdown(false);
         setStatusMessage("Initializing fake security protocols…");
 
@@ -136,14 +87,7 @@ export default function FakeScanner() {
             if (current === 100) {
                 clearInterval(interval);
 
-                const found = [];
-                const count = Math.floor(Math.random() * 6) + 3; // 3–8
-                for (let i = 0; i < count; i++) {
-                    found.push(getRandomFrom(virusNames));
-                }
-
                 setTimeout(() => {
-                    setResults(found);
                     setIsScanning(false);
                     setStatusMessage("Scan complete. Everything is definitely worse now.");
                     setMeltdown(true);
@@ -158,8 +102,6 @@ export default function FakeScanner() {
         setResults(null);
         setProgress(0);
         setStatusMessage("System barely holding together. Scan again?");
-        setPopups([]);
-        setRain([]);
     }
 
     return (
@@ -204,52 +146,29 @@ export default function FakeScanner() {
                 </div>
             )}
 
-            {/* Pop-up virus warnings */}
-            {popups.map((p) => (
-                <div
-                    key={p.id}
-                    className="scanner-popup"
-                    style={{ top: `${p.y}vh`, left: `${p.x}vw` }}
-                >
-                    <div className="scanner-popup-header">
-                        💥 CRITICAL FAILURE 💥
-                    </div>
-                    <div className="scanner-popup-body">
-                        <p>{p.line1}</p>
-                        <p>{p.line2}</p>
-                    </div>
-                    <button
-                        className="scanner-popup-button"
-                        onClick={() => closePopup(p.id)}
-                    >
-                        {Math.random() < 0.5 ? "PANIC" : "LOL OK"}
-                    </button>
-                </div>
-            ))}
-
-            {/* Emoji rain */}
-            {rain.map((e) => (
-                <div
-                    key={e.id}
-                    className="scanner-emoji-rain"
-                    style={{
-                        left: `${e.left}vw`,
-                        animationDuration: `${e.duration}s`,
-                    }}
-                >
-                    {e.emoji}
-                </div>
-            ))}
-
             {/* Meltdown overlay */}
             {meltdown && (
-                <div className="scanner-meltdown-overlay">
+                <div className="scanner-meltdown-overlay glitch-effect">
                     <div className="scanner-meltdown-box">
                         <h2>💥 CRITICAL FAILURE 💥</h2>
                         <p>YOUR EMOTIONAL SUPPORT HARD DRIVE IS COMPROMISED.</p>
                         <div className="scanner-meltdown-buttons">
-                            <button onClick={resetAfterMeltdown}>PANIC</button>
-                            <button onClick={resetAfterMeltdown}>LOL OK</button>
+                            <button
+                                onClick={() => {
+                                    playRandomSound();
+                                    resetAfterMeltdown();
+                                }}
+                            >
+                                PANIC
+                            </button>
+                            <button
+                                onClick={() => {
+                                    playRandomSound();
+                                    resetAfterMeltdown();
+                                }}
+                            >
+                                LOL OK
+                            </button>
                         </div>
                     </div>
                 </div>
