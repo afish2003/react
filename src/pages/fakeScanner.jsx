@@ -3,7 +3,7 @@ let audioUnlocked = false;
 function unlockAudio() {
     if (audioUnlocked) return;
 
-    const testAudio = new Audio("/sounds/msdosError.mp3");
+    const testAudio = new Audio("./sounds/msdosError.mp3");
     testAudio.volume = 0;
     testAudio.play().catch(() => {});
     audioUnlocked = true;
@@ -52,18 +52,10 @@ const popupLines2 = [
 const rainEmojis = ["🦠", "🤢", "😡", "💥", "🤖", "🫠", "😱", "🔥"];
 
 const popupSounds = [
-    "/sounds/windowsErrorMix.mp3",
-    "/sounds/msdosError.mp3",
-    "/sounds/birdScream.mp3",
+    "./sounds/windowsErrorMix.mp3",
+    "./sounds/msdosError.mp3",
+    "./sounds/birdScream.mp3",
 ];
-
-const scanSounds = [
-    "/sounds/msdosError.mp3"
-];
-
-let scanAudio = null;
-
-let lastSoundTime = 0;
 
 function playRandomSound(volume = 0.6) {
     const now = Date.now();
@@ -80,22 +72,7 @@ function playRandomSound(volume = 0.6) {
     audio.play().catch(() => {});
 }
 
-function playScanLoop() {
-    if (scanAudio) return;
-
-    const src = scanSounds[Math.floor(Math.random() * scanSounds.length)];
-    scanAudio = new Audio(src);
-    scanAudio.volume = 0.4;
-    scanAudio.loop = true;
-    scanAudio.play().catch(() => {});
-}
-
-function stopScanLoop() {
-    if (!scanAudio) return;
-    scanAudio.pause();
-    scanAudio.currentTime = 0;
-    scanAudio = null;
-}
+let lastSoundTime = 0;
 
 export default function FakeScanner() {
     const [progress, setProgress] = useState(0);
@@ -121,7 +98,6 @@ export default function FakeScanner() {
     function closePopup(id) {
         setPopups((prev) => prev.filter((p) => p.id !== id));
         playRandomSound();
-        spawnPopup(); // immediately open a new popup after closing one
     }
 
     function spawnEmoji() {
@@ -137,12 +113,6 @@ export default function FakeScanner() {
         }, item.duration * 1000);
     }
 
-    function triggerMeltdown() {
-        stopScanLoop();
-        setMeltdown(true);
-        playRandomSound(1);
-    }
-
     function startScan() {
         if (isScanning) return;
 
@@ -153,7 +123,6 @@ export default function FakeScanner() {
         setRain([]);
         setMeltdown(false);
         setStatusMessage("Initializing fake security protocols…");
-        playScanLoop();
 
         let current = 0;
 
@@ -163,9 +132,6 @@ export default function FakeScanner() {
             setProgress(current);
 
             setStatusMessage(getRandomFrom(progressMessages));
-
-            if (Math.random() < 0.4) spawnPopup();
-            if (Math.random() < 0.6) spawnEmoji();
 
             if (current === 100) {
                 clearInterval(interval);
@@ -177,14 +143,11 @@ export default function FakeScanner() {
                 }
 
                 setTimeout(() => {
-                    stopScanLoop();
                     setResults(found);
                     setIsScanning(false);
                     setStatusMessage("Scan complete. Everything is definitely worse now.");
-                    playRandomSound();
-                    if (found.length > 6) {
-                        triggerMeltdown();
-                    }
+                    setMeltdown(true);
+                    playRandomSound(1);
                 }, 600);
             }
         }, 350);
