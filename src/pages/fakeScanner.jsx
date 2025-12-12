@@ -1,3 +1,14 @@
+let audioUnlocked = false;
+
+function unlockAudio() {
+    if (audioUnlocked) return;
+
+    const testAudio = new Audio("/sounds/msdosError.mp3");
+    testAudio.volume = 0;
+    testAudio.play().catch(() => {});
+    audioUnlocked = true;
+}
+
 import { useState } from "react";
 
 function getRandomFrom(arr) {
@@ -195,7 +206,13 @@ export default function FakeScanner() {
             <p className="scanner-status">{statusMessage}</p>
 
             {!isScanning && (
-                <button className="scan-button" onClick={startScan}>
+                <button
+                    className="scan-button"
+                    onClick={() => {
+                        unlockAudio();
+                        startScan();
+                    }}
+                >
                     {progress === 0 ? "Start Scan" : "Scan Again (Bad Idea)"}
                 </button>
             )}
