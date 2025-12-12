@@ -18,44 +18,72 @@ const virusNames = [
 
 const progressMessages = [
     "Decrypting noodles…",
-    "Overclocking sadness…",
+    "Overclocking flux capacitor…",
     "Reticulating splines…",
-    "Analyzing emotional damage…",
+    "Analyzing emotional state…",
     "Uninstalling common sense…",
     "Rebooting your bad decisions…",
-    "Removing leftover dignity…",
-    "Compromising your emotional support hard drive…",
 ];
 
 const popupLines1 = [
     "YOUR TOASTER IS NOW SENTIENT.",
     "YOUR RAM IS LEAKING SPAGHETTI.",
-    "YOUR WIFI PASSWORD IS NOW ‘PASSWORD’.",
     "YOUR PRINTER JUST SUBSCRIBED TO 3 NEWSLETTERS.",
 ];
 
 const popupLines2 = [
     "RECOMMENDED ACTION: PANIC.",
-    "STATUS: IRREPARABLE BUT FUNNY.",
+    "STATUS: IRREPARABLE.",
     "FIXED: 0, MADE WORSE: 27.",
     "SOLUTION: TURN IT OFF AND CRY.",
 ];
 
 const rainEmojis = ["🦠", "🤢", "😡", "💥", "🤖", "🫠", "😱", "🔥"];
 
-function playSound(type) {
-    const map = {
-        scan: "/sounds/msdosError.mp3",
-        popup: "/sounds/windowsErrorMix.mp3",
-        meltdown: "/sounds/birdScream.mp3",
-    };
-    const src = map[type];
-    if (!src) return;
+const popupSounds = [
+    "/sounds/windowsErrorMix.mp3",
+    "/sounds/msdosError.mp3",
+    "/sounds/birdScream.mp3",
+];
+
+const scanSounds = [
+    "/sounds/msdosError.mp3"
+];
+
+let scanAudio = null;
+
+let lastSoundTime = 0;
+
+function playRandomSound(volume = 0.6) {
+    const now = Date.now();
+
+    // prevent rapid-fire sound spam
+    if (now - lastSoundTime < 250) return;
+    lastSoundTime = now;
+
+    const src = popupSounds[Math.floor(Math.random() * popupSounds.length)];
     const audio = new Audio(src);
-    if (type !== "meltdown") audio.volume = 0.6;
-    audio.play().catch(() => {
-        // ignore autoplay errors
-    });
+    audio.currentTime = 0;
+    audio.volume = volume;
+
+    audio.play().catch(() => {});
+}
+
+function playScanLoop() {
+    if (scanAudio) return;
+
+    const src = scanSounds[Math.floor(Math.random() * scanSounds.length)];
+    scanAudio = new Audio(src);
+    scanAudio.volume = 0.4;
+    scanAudio.loop = true;
+    scanAudio.play().catch(() => {});
+}
+
+function stopScanLoop() {
+    if (!scanAudio) return;
+    scanAudio.pause();
+    scanAudio.currentTime = 0;
+    scanAudio = null;
 }
 
 export default function FakeScanner() {
@@ -76,13 +104,14 @@ export default function FakeScanner() {
             y: Math.floor(Math.random() * 50) + 10, // vh
         };
         setPopups((prev) => [...prev, popup]);
-        playSound("popup");
+        playRandomSound();
     }
 
-function closePopup(id) {
-    setPopups((prev) => prev.filter((p) => p.id !== id));
-    spawnPopup(); // immediately open a new popup after closing one
-}
+    function closePopup(id) {
+        setPopups((prev) => prev.filter((p) => p.id !== id));
+        playRandomSound();
+        spawnPopup(); // immediately open a new popup after closing one
+    }
 
     function spawnEmoji() {
         const item = {
@@ -98,8 +127,9 @@ function closePopup(id) {
     }
 
     function triggerMeltdown() {
+        stopScanLoop();
         setMeltdown(true);
-        playSound("meltdown");
+        playRandomSound(1);
     }
 
     function startScan() {
@@ -112,7 +142,7 @@ function closePopup(id) {
         setRain([]);
         setMeltdown(false);
         setStatusMessage("Initializing fake security protocols…");
-        playSound("scan");
+        playScanLoop();
 
         let current = 0;
 
@@ -136,10 +166,11 @@ function closePopup(id) {
                 }
 
                 setTimeout(() => {
+                    stopScanLoop();
                     setResults(found);
                     setIsScanning(false);
                     setStatusMessage("Scan complete. Everything is definitely worse now.");
-                    playSound("popup");
+                    playRandomSound();
                     if (found.length > 6) {
                         triggerMeltdown();
                     }
