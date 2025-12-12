@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 
 let audioUnlocked = false;
 
@@ -89,6 +89,10 @@ export default function FakeScanner() {
         "Your computer has decided to stop cooperating for personal reasons."
     );
 
+    const glitchIntervalRef = useRef(null);
+    const glitchTimeoutRef = useRef(null);
+    const finishTimeoutRef = useRef(null);
+
     function startScan() {
         if (isScanning) return;
 
@@ -97,6 +101,19 @@ export default function FakeScanner() {
         setResults(null);
         setMeltdown(false);
         setStatusMessage("Booting extremely real, very serious security engine…");
+
+        if (glitchIntervalRef.current) {
+            clearInterval(glitchIntervalRef.current);
+            glitchIntervalRef.current = null;
+        }
+        if (glitchTimeoutRef.current) {
+            clearTimeout(glitchTimeoutRef.current);
+            glitchTimeoutRef.current = null;
+        }
+        if (finishTimeoutRef.current) {
+            clearTimeout(finishTimeoutRef.current);
+            finishTimeoutRef.current = null;
+        }
 
         let current = 0;
 
@@ -110,13 +127,14 @@ export default function FakeScanner() {
             if (current === 100) {
                 clearInterval(interval);
 
-                setTimeout(() => {
+                finishTimeoutRef.current = setTimeout(() => {
                     setIsScanning(false);
                     setStatusMessage("Scan complete. This machine has seen things.");
                     setMeltdown(true);
                     setGlitching(true);
 
-                    const glitchInterval = setInterval(() => {
+                    // animated scrambling
+                    glitchIntervalRef.current = setInterval(() => {
                         setDisplayText(
                             glitchText(
                                 "Your computer has decided to stop cooperating for personal reasons.",
@@ -125,19 +143,37 @@ export default function FakeScanner() {
                         );
                     }, 120);
 
-                    setTimeout(() => {
-                        clearInterval(glitchInterval);
+                    glitchTimeoutRef.current = setTimeout(() => {
+                        if (glitchIntervalRef.current) {
+                            clearInterval(glitchIntervalRef.current);
+                            glitchIntervalRef.current = null;
+                        }
                         setDisplayText("Your computer has decided to stop cooperating for personal reasons.");
                         setGlitching(false);
+                        glitchTimeoutRef.current = null;
                     }, 1200);
 
                     playRandomSound(1);
+                    finishTimeoutRef.current = null;
                 }, 600);
             }
         }, 350);
     }
 
     function resetAfterMeltdown() {
+        if (glitchIntervalRef.current) {
+            clearInterval(glitchIntervalRef.current);
+            glitchIntervalRef.current = null;
+        }
+        if (glitchTimeoutRef.current) {
+            clearTimeout(glitchTimeoutRef.current);
+            glitchTimeoutRef.current = null;
+        }
+        if (finishTimeoutRef.current) {
+            clearTimeout(finishTimeoutRef.current);
+            finishTimeoutRef.current = null;
+        }
+
         setGlitching(false);
         if (activeAudio) {
             activeAudio.pause();
