@@ -85,6 +85,9 @@ export default function FakeScanner() {
     const [statusMessage, setStatusMessage] = useState("Standing by. Judging silently.");
     const [meltdown, setMeltdown] = useState(false);
     const [glitching, setGlitching] = useState(false);
+    const [displayText, setDisplayText] = useState(
+        "Your computer has decided to stop cooperating for personal reasons."
+    );
 
     function startScan() {
         if (isScanning) return;
@@ -112,7 +115,22 @@ export default function FakeScanner() {
                     setStatusMessage("Scan complete. This machine has seen things.");
                     setMeltdown(true);
                     setGlitching(true);
-                    setTimeout(() => setGlitching(false), 1200);
+
+                    const glitchInterval = setInterval(() => {
+                        setDisplayText(
+                            glitchText(
+                                "Your computer has decided to stop cooperating for personal reasons.",
+                                0.25
+                            )
+                        );
+                    }, 120);
+
+                    setTimeout(() => {
+                        clearInterval(glitchInterval);
+                        setDisplayText("Your computer has decided to stop cooperating for personal reasons.");
+                        setGlitching(false);
+                    }, 1200);
+
                     playRandomSound(1);
                 }, 600);
             }
@@ -130,6 +148,7 @@ export default function FakeScanner() {
         setResults(null);
         setProgress(0);
         setStatusMessage("System stable* (*definition of ‘stable’ may vary).");
+        setDisplayText("Your computer has decided to stop cooperating for personal reasons.");
     }
 
     return (
@@ -179,18 +198,10 @@ export default function FakeScanner() {
                 <div className="scanner-meltdown-overlay glitch-effect">
                     <div className="scanner-meltdown-box">
                         <h2>💥 SYSTEM HAS MADE A DECISION 💥</h2>
-                        <p>
-                            {glitching
-                                ? glitchText(
-                                      "Your computer has decided to stop cooperating for personal reasons.",
-                                      0.25
-                                  )
-                                : "Your computer has decided to stop cooperating for personal reasons."}
-                        </p>
+                        <p>{displayText}</p>
                         <div className="scanner-meltdown-buttons">
                             <button
                                 onClick={() => {
-                                    playRandomSound();
                                     resetAfterMeltdown();
                                 }}
                             >
@@ -198,7 +209,6 @@ export default function FakeScanner() {
                             </button>
                             <button
                                 onClick={() => {
-                                    playRandomSound();
                                     resetAfterMeltdown();
                                 }}
                             >
